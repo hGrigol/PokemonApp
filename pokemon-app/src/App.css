@@ -1,3 +1,39 @@
 .title{
   text-align: center;
 }
+
+.pokemon-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.pokemon-table th,
+.pokemon-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.pokemon-table th {
+  background-color: #f2f2f2;
+  color: #333;
+}
+
+.pokemon-table tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.pokemon-table tbody tr:hover {
+  background-color: #ddd;
+}
+
+/* Beispiel für ein Pokemon-Styling */
+.pokemon-table td:first-child {
+  font-weight: bold;
+  color: #007bff; /* Blau, wie in Pokemon-Links */
+}
+
+.pokemon-table td:nth-child(2) {
+  font-style: italic;
+  color: #ff6600; /* Orange, wie in Pokemon-Typen */
+}

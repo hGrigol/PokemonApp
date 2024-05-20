@@ -25,9 +25,22 @@ interface PokemonTableProps {
   data: Pokemon[];
 }
 
+interface PokemonRowProps {
+  pokemonData: Pokemon;
+}
+
+const PokemonRow: React.FC<PokemonRowProps>=({pokemonData}) => {
+  return (
+    <tr key={pokemonData.id}>
+            <td>{pokemonData.name.english}</td>
+            <td>{pokemonData.type.join(",")}</td>
+          </tr>
+  )
+}
+
 const PokemonTable: React.FC<PokemonTableProps> = ({ data }) => {
   return (
-    <table>
+    <table className='pokemon-table'>
       <thead>
         <tr>
           <th>Name</th>
@@ -35,11 +48,8 @@ const PokemonTable: React.FC<PokemonTableProps> = ({ data }) => {
         </tr>
       </thead>
       <tbody>
-        {data.map((pokemon, index) => (
-          <tr key={index}>
-            <td>{pokemon.name.english}</td>
-            <td>{pokemon.type}</td>
-          </tr>
+        {data.slice(0,20).map((pokemon) => (
+          <PokemonRow pokemonData={pokemon}></PokemonRow>
         ))}
       </tbody>
     </table>
