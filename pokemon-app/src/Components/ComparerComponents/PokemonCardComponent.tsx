@@ -16,6 +16,8 @@ const PokemonCardComponent: React.FC<PokemonCardProps> = ({ pokemonName, pokemon
 
 return (
   <div style={styles.card}>
+    <img src={pokemonImage} alt={pokemonName} style={styles.image} />
+
     <h2>{pokemonName}</h2>
   </div>
 );
