@@ -1,23 +1,24 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Pokemon } from '../../Types';
 
 
 // Props-Interface für die Komponente
 interface PokemonCardProps {
-  pokemon: Pokemon;
+  pokemonName: string;
+  pokemonImage: string;
 }
 
 // Generisches Bild als Platzhalter
 const placeholderImage = 'https://via.placeholder.com/150';
 
 // PokemonCard-Komponente
-const PokemonCardComponent: React.FC<PokemonCardProps> = ({ pokemon }) => {
-  return (
-    <div style={styles.card}>
-      <img src={placeholderImage} alt={pokemon.name.english} style={styles.image} />
-      <h2>{pokemon.name.english}</h2>
-    </div>
-  );
+const PokemonCardComponent: React.FC<PokemonCardProps> = ({ pokemonName, pokemonImage }) => {
+
+return (
+  <div style={styles.card}>
+    <h2>{pokemonName}</h2>
+  </div>
+);
 };
 
 // Einfache CSS-in-JS Styles
