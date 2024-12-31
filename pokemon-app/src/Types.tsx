@@ -16,3 +16,22 @@ export interface Pokemon {
     Speed: number;
   };
 }
+
+export interface Stat {
+  stat: {
+    name: string;
+  };
+  base_stat: number;
+}
+
+export interface Sprites {
+  front_default: string;
+}
+
+export interface PokemonDataGraphQl {
+  pokemon: {
+    name: string;
+    stats: Stat[];
+    sprites: Sprites;
+  };
+}

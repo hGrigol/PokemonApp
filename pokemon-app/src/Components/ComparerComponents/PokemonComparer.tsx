@@ -3,6 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import PokemonCardComponent from './PokemonCardComponent';
 import { CSSProperties } from 'react';
+import { useLazyQuery } from '@apollo/client';
+import { GET_POKEMON_BY_ID } from '../../graphql/queries';
+import { PokemonDataGraphQl } from '../../Types';
 
 const getRandomPokemonId = () => {
   return Math.floor(Math.random() * 898) + 1; // Assuming there are 898 Pokémon
@@ -24,65 +27,65 @@ const PokemonComparer: React.FC = () => {
     { image: '', name: 'Loading...' },
   ]);
 
-  const fetchPokemonData = async (id: number) => {
-    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
-    const data = await response.json();
-    const imageSrc = data.sprites.other['official-artwork'].front_default
-    const image = new Image();
-    image.src = imageSrc;
-    await image.decode();
+  const [getPokemonById, { loading, data, error }] = useLazyQuery<PokemonDataGraphQl>(GET_POKEMON_BY_ID);
 
-    return {
-      image: imageSrc,
-      name: data.name.toUpperCase(),
-    };
+  const fetchPokemonDataByGraphQl = async (id: string) => {
+    const { data } = await getPokemonById({ variables: { id } });
+    if (data) {
+      const imageSrc = data.pokemon.sprites.front_default;
+      const image = new Image();
+      image.src = imageSrc;
+      await image.decode();
+      return {
+        image: imageSrc,
+        name: data.pokemon.name.toUpperCase(),
+      };
+    }
+    return { image: '', name: 'Error' };
   };
 
   const handleVsButtonClick = async () => {
-    setCurrentPokemonData(nextPokemonData)
+    setCurrentPokemonData(nextPokemonData);
   };
-  useEffect(()=>{
+
+  useEffect(() => {
     const fetchNextPokemon = async () => {
-        const [firstId, secondId] = [getRandomPokemonId(), getRandomPokemonId()];
+      const [firstId, secondId] = [getRandomPokemonId(), getRandomPokemonId()].map(id => id.toString());
 
-        const [firstPokemon, secondPokemon] = await Promise.all([
-         fetchPokemonData(firstId),
-         fetchPokemonData(secondId),
-        ]);
-        
+      const [firstPokemon, secondPokemon] = await Promise.all([
+        fetchPokemonDataByGraphQl(firstId),
+        fetchPokemonDataByGraphQl(secondId),
+      ]);
 
-        setNextPokemonData([firstPokemon, secondPokemon]);
-    }
+      setNextPokemonData([firstPokemon, secondPokemon]);
+    };
     fetchNextPokemon();
-  },[currentPokemonData])
+  }, [currentPokemonData]);
 
   useEffect(() => {
     const initializePokemon = async () => {
+      const [firstId, secondId] = [getRandomPokemonId(), getRandomPokemonId()].map(id => id.toString());
 
-        const [firstId, secondId] = [getRandomPokemonId(), getRandomPokemonId()];
-  
-        const [firstPokemon, secondPokemon] = await Promise.all([
-          fetchPokemonData(firstId),
-          fetchPokemonData(secondId),
-        ]);
-  
-        setCurrentPokemonData([firstPokemon, secondPokemon]);
-      };
-  
+      const [firstPokemon, secondPokemon] = await Promise.all([
+        fetchPokemonDataByGraphQl(firstId),
+        fetchPokemonDataByGraphQl(secondId),
+      ]);
+
+      setCurrentPokemonData([firstPokemon, secondPokemon]);
+    };
+
     initializePokemon(); // Initial load
 
   }, []);
 
   return (
     <div style={styles.container}>
-        
       <div style={styles.cardContainer}>
         <PokemonCardComponent pokemonImage={currentPokemonData[0].image} pokemonName={currentPokemonData[0].name} />
         <PokemonCardComponent pokemonImage={currentPokemonData[1].image} pokemonName={currentPokemonData[1].name} />
       </div>
-        
-      <button style={styles.vsButton} onClick={handleVsButtonClick}>VS</button>
-    
+      <button style={styles.vsButton} onClick={handleVsButtonClick} disabled={loading}>VS</button>
+      {error && <p>Error: {error.message}</p>}
     </div>
   );
 };
